@@ -28,6 +28,8 @@ import android.view.inputmethod.InputMethodSubtype;
 import io.flutter.Log;
 import io.flutter.embedding.engine.FlutterJNI;
 import io.flutter.embedding.engine.systemchannels.TextInputChannel;
+import android.view.inputmethod.InputContentInfo;
+import android.os.Bundle;
 
 class InputConnectionAdaptor extends BaseInputConnection {
   private final View mFlutterView;
@@ -121,6 +123,8 @@ class InputConnectionAdaptor extends BaseInputConnection {
     mImm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
     isSamsung = isSamsung();
+
+    Log.d("HackFlutterEngine", "new InputConnectionAdaptor()");
   }
 
   public InputConnectionAdaptor(
@@ -509,4 +513,17 @@ class InputConnectionAdaptor extends BaseInputConnection {
     }
     return true;
   }
+
+  @Override
+  public boolean commitContent(InputContentInfo inputContentInfo, int flags, Bundle opts) {
+      Log.d("HackFlutterEngine", "commitContent: " + inputContentInfo.getLinkUri().toString());
+
+      textInputChannel.commitContent(mClient, inputContentInfo.getLinkUri().toString());
+      // if (listener.onCommitContent(InputContentInfoCompat.wrap(inputContentInfo),
+      //         flags, opts)) {
+          return true;
+      // }
+      // return super.commitContent(inputContentInfo, flags, opts);
+  }
+
 }
